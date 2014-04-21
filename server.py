@@ -4,7 +4,9 @@ connect.bind(('', 1234))
 print("Waiting for data on port 1234")
 while True:
 	data, addr = connect.recvfrom(1024)
+	data = data.decode('utf-8')
+	addr, port = addr
 	#Si aucune donnee recue alors on break
 	if not data:
 		break
-	print ("On vous dit: " + str(data))
+	print (str(addr) + " says: " + data)
