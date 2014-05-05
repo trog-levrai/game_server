@@ -34,8 +34,6 @@ while True:
 	elif addr == addr1:
 		#C'est le 1 qui parle
 		connect.sendto(data, (addr2, 1234))
-		print(nick1 + " just sent \"" + data.decode('utf-8') + "\" to " + nick2)
 	elif addr == addr2:
 		#C'est le 1 qui parle
 		connect.sendto(data, (addr1, 1234))
-		print(nick2 + " just sent \"" + data.decode('utf-8') + "\" to " + nick1)
