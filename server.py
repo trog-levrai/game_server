@@ -24,6 +24,8 @@ while nick1 == "" or nick2 == "":
 		else:
 			print("Identification failed")
 #Il faudra ajouter un envois des infos utiles aux joueurs (pseudos, ...)
+connect.sendto(bytes("nick:" + nick2, "utf-8"), (addr1, 1234))
+connect.sendto(bytes("nick:" + nick1, "utf-8"), (addr2, 1234))
 print(nick1 + " and " + nick2 + " have joined the game.")
 while True:
 	data, addr = connect.recvfrom(1024)
