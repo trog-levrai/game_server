@@ -43,5 +43,4 @@ while nick1 == "" or nick2 == "":
 connect.sendto(bytes("nick:" + nick2, "utf-8"), (addr1, 1234))
 connect.sendto(bytes("nick:" + nick1, "utf-8"), (addr2, 1234))
 print(nick1 + " and " + nick2 + " have joined the game.")
-thread1 = threading.Thread(None, commute, None, (addr1,addr2), {'nom':'thread1'})
-thread1.start()
+threading.Thread(None, commute, None, (addr1,addr2), {'nom':'thread1'}).start()
