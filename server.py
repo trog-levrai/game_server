@@ -1,4 +1,20 @@
 import socket
+import threading
+#Fonction de communicatio
+def commute(addr1, addr2):
+	while True:
+		data, addr = connect.recvfrom(1024)
+		addr, port = addr
+		#Si aucune donnee recue alors on break
+		if not data:
+			break
+		elif addr == addr1:
+			#C'est le 1 qui parle
+			connect.sendto(data, (addr2, 1234))
+		elif addr == addr2:
+			#C'est le 1 qui parle
+			connect.sendto(data, (addr1, 1234))
+
 connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 connect.bind(('', 1234))
 print("Waiting for connections on port 1234...")
@@ -27,15 +43,5 @@ while nick1 == "" or nick2 == "":
 connect.sendto(bytes("nick:" + nick2, "utf-8"), (addr1, 1234))
 connect.sendto(bytes("nick:" + nick1, "utf-8"), (addr2, 1234))
 print(nick1 + " and " + nick2 + " have joined the game.")
-while True:
-	data, addr = connect.recvfrom(1024)
-	addr, port = addr
-	#Si aucune donnee recue alors on break
-	if not data:
-		break
-	elif addr == addr1:
-		#C'est le 1 qui parle
-		connect.sendto(data, (addr2, 1234))
-	elif addr == addr2:
-		#C'est le 1 qui parle
-		connect.sendto(data, (addr1, 1234))
+thread1 = threading.Thread(None, commute, None, (addr1,addr2), {'nom':'thread1'})
+thread1.start()
