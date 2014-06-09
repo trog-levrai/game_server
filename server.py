@@ -1,5 +1,6 @@
 import socket
 import threading
+import select
 import os
 import time
 os.chdir("/home/ilan/game_server")
@@ -22,33 +23,44 @@ def commute(addr1, addr2):
 def echo(string):
 	logFile.write(time.asctime(time.localtime()) + " - " + string + "\n")
 	print(string)
-connect = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#Connexions en TCP/IP
+connect = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connect.bind(('', 1234))
+connect.listen(5)
 echo("Waiting for connections on port 1234...")
+working = True
+clients = []
 nick1 = ""
 nick2 = ""
-addr1 = ""
-addr2 = ""
-while nick1 == "" or nick2 == "":
-	data, addr = connect.recvfrom(1024)
-	data = data.decode('utf-8')
-	addr, port = addr
-	#On va remplir les infos d'adresse et de pseudo
-	if nick1 == "":
-		if data.startswith("nick:"):
-			nick1 = data[5:]
-			addr1 = addr
-		else:
-			echo("Identification failed")
-	elif nick2 == "":
-		if data.startswith("nick:"):
-			nick2 = data[5:]
-			addr2 = addr
-		else:
-			echo("Identification failed")
-#Il faudra ajouter un envois des infos utiles aux joueurs (pseudos, ...)
-connect.sendto(bytes("nick:" + nick2, "utf-8"), (addr1, 1234))
-connect.sendto(bytes("nick:" + nick1, "utf-8"), (addr2, 1234))
-echo(nick1 + " and " + nick2 + " have joined the game.")
+clientsToRead = []
+arg = []
+while working:
+	#On check les nouveaux clients
+	queries, wlist, xlist = select.select([connect], [], [])
+	for conn in queries:
+		conn_, info = conn.accept()
+	#On ajoute le client a la liste
+	clients.append(conn_)
+	#On avise en fonction de sa taille
+	if clients.length == 2:
+		working = false
+	elif clients.length > 2:
+		echo("More than 2 clients, aborting game!")
+		for client in clients:
+			client.send(bytes("aborting", "utf-8"))
+		clients = []
+for client in clients:
+	client.send(bytes("accepted", "utf-8"))
+while arg.length != 2:
+	try:
+		clientsToRead, wlist, xlist = select.select(clients, [], [])
+	except select.error:
+		pass
+	else:
+		for client in clientsToRead:
+			nick = client.recv(1024)
+			arg.append((client),nick))
+			echo(nick + " joined the game")
+echo("Game starting")
 logFile.Close()
 threading.Thread(None, commute, None, (addr1,addr2), {'nom':'thread1'}).start()
