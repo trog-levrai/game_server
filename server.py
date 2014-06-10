@@ -30,10 +30,8 @@ connect.listen(5)
 echo("Waiting for connections on port 1234...")
 working = True
 clients = []
-nick1 = ""
-nick2 = ""
 clientsToRead = []
-arg = []
+nick = []
 while working:
 	#On check les nouveaux clients
 	queries, wlist, xlist = select.select([connect], [], [])
@@ -51,16 +49,13 @@ while working:
 		clients = []
 for client in clients:
 	client.send(bytes("accepted", "utf-8"))
-while arg.length != 2:
-	try:
-		clientsToRead, wlist, xlist = select.select(clients, [], [])
-	except select.error:
-		pass
-	else:
-		for client in clientsToRead:
-			nick = client.recv(1024)
-			arg.append((client),nick))
-			echo(nick + " joined the game")
+while nick.length < 2:
+	clientsToRead, wlist, xlist = select.select([connect], [], [])
+	for client in clientsToRead:
+		nick.append(client.recv(1024))
+for client in clients:
+	client.send(bytes(nick[0], "utf-8"))
+	client.send(bytes(nick[1], "utf-8"))
 echo("Game starting")
 logFile.Close()
 threading.Thread(None, commute, None, (addr1,addr2), {'nom':'thread1'}).start()
