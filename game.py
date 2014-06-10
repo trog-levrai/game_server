@@ -8,7 +8,7 @@ class Game:
 		conn = connect
 		client1 = arg[0]
 		client2 = arg[1]
-	def commute(addr1, addr2):
+	def commute():
         	while True:
 			clients, wlist, xlist = select.select([conn], [], [])
 			for client in clients:

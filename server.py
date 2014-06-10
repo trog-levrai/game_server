@@ -58,4 +58,5 @@ for client in clients:
 	client.send(bytes(nick[1], "utf-8"))
 echo("Game starting")
 logFile.Close()
-threading.Thread(None, commute, None, (addr1,addr2), {'nom':'thread1'}).start()
+game = Game(clients, connect)
+threading.Thread(None, game.commute, None, (), {'nom':'thread1'}).start()
