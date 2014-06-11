@@ -40,16 +40,16 @@ while working:
 	#On ajoute le client a la liste
 	clients.append(conn_)
 	#On avise en fonction de sa taille
-	if clients.length == 2:
+	if len(clients) == 2:
 		working = false
-	elif clients.length > 2:
+	elif len(clients) > 2:
 		echo("More than 2 clients, aborting game!")
 		for client in clients:
 			client.send(bytes("aborting", "utf-8"))
 		clients = []
 for client in clients:
 	client.send(bytes("accepted", "utf-8"))
-while nick.length < 2:
+while len(nick) < 2:
 	clientsToRead, wlist, xlist = select.select([connect], [], [])
 	for client in clientsToRead:
 		nick.append(client.recv(1024))
