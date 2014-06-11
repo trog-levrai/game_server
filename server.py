@@ -30,29 +30,37 @@ connect.listen(5)
 echo("Waiting for connections on port 1234...")
 working = True
 clients = []
-clientsToRead = []
 nick = []
 while working:
 	#On check les nouveaux clients
 	queries, wlist, xlist = select.select([connect], [], [])
 	for conn in queries:
 		conn_, info = conn.accept()
+		echo("lol")
 	#On ajoute le client a la liste
-	clients.append(conn_)
+		clients.append(conn_)
 	#On avise en fonction de sa taille
 	if len(clients) == 2:
-		working = false
-	elif len(clients) > 2:
-		echo("More than 2 clients, aborting game!")
-		for client in clients:
-			client.send(bytes("aborting", "utf-8"))
-		clients = []
-for client in clients:
-	client.send(bytes("accepted", "utf-8"))
+		working = False
+	#elif len(clients) > 2:
+	#	echo("More than 2 clients, aborting game!")
+	#	for client in clients:
+	#		client.send(bytes("aborting", "utf-8"))
+	#	clients = []
+#for client in clients:
+#	client.send(bytes("accepted", "utf-8"))
+clientsToRead = []
 while len(nick) < 2:
-	clientsToRead, wlist, xlist = select.select([connect], [], [])
-	for client in clientsToRead:
-		nick.append(client.recv(1024))
+	try:
+		clientsToRead, wlist, xlist = select.select(clients, [], [], 0.05)
+	except select.error:
+		pass
+	else:
+		for client in clientsToRead:
+			n = client.recv(1024)
+			n = n.decode()
+			echo(n + " joined the gqme")
+			nick.append(n)
 for client in clients:
 	client.send(bytes(nick[0], "utf-8"))
 	client.send(bytes(nick[1], "utf-8"))
