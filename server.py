@@ -6,19 +6,19 @@ import time
 os.chdir("/home/ilan/game_server")
 logFile = open("server.log", "a")
 #Fonction de communication
-def commute(addr1, addr2):
+def commute():
 	while True:
-		data, addr = connect.recvfrom(1024)
-		addr, port = addr
-		#Si aucune donnee recue alors on break
-		if not data:
-			break
-		elif addr == addr1:
-			#C'est le 1 qui parle
-			connect.sendto(data, (addr2, 1234))
-		elif addr == addr2:
-			#C'est le 1 qui parle
-			connect.sendto(data, (addr1, 1234))
+		try:
+			senders, wlist, xlist = select.select(clients, [], [])
+		except select.error:
+			pass
+		else:
+			for sender in senders:
+				data = sender.recv(2048)
+				if sender == clients[0]:
+					clients[1].send(data)
+				else:
+					clients[0].send(data)
 #Fonction qui gere l'affichage
 def echo(string):
 	logFile.write(time.asctime(time.localtime()) + " - " + string + "\n")
@@ -42,13 +42,11 @@ while working:
 	#On avise en fonction de sa taille
 	if len(clients) == 2:
 		working = False
-	#elif len(clients) > 2:
-	#	echo("More than 2 clients, aborting game!")
-	#	for client in clients:
-	#		client.send(bytes("aborting", "utf-8"))
-	#	clients = []
-#for client in clients:
-#	client.send(bytes("accepted", "utf-8"))
+	elif len(clients) > 2:
+		echo("More than 2 clients, aborting game!")
+		for client in clients:
+			client.send(bytes("aborting", "utf-8"))
+		clients = []
 clientsToRead = []
 while len(nick) < 2:
 	try:
@@ -59,12 +57,11 @@ while len(nick) < 2:
 		for client in clientsToRead:
 			n = client.recv(1024)
 			n = n.decode()
-			echo(n + " joined the gqme")
+			echo("New player coming: " + n)
 			nick.append(n)
 for client in clients:
 	client.send(bytes(nick[0], "utf-8"))
 	client.send(bytes(nick[1], "utf-8"))
 echo("Game starting")
 logFile.Close()
-game = Game(clients, connect)
-threading.Thread(None, game.commute, None, (), {'nom':'thread1'}).start()
+threading.Thread(None, commute, None, (), {'nom':'thread1'}).start()
