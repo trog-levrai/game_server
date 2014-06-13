@@ -63,5 +63,5 @@ for client in clients:
 	client.send(bytes(nick[0], "utf-8"))
 	client.send(bytes(nick[1], "utf-8"))
 echo("Game starting")
-logFile.Close()
-threading.Thread(None, commute, None, (), {'nom':'thread1'}).start()
+logFile.close()
+commute()
