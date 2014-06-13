@@ -59,9 +59,6 @@ while len(nick) < 2:
 			n = n.decode()
 			echo("New player coming: " + n)
 			nick.append(n)
-for client in clients:
-	client.send(bytes(nick[0], "utf-8"))
-	client.send(bytes(nick[1], "utf-8"))
 echo("Game starting")
 logFile.close()
 commute()
