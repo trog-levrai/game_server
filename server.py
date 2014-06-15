@@ -9,12 +9,12 @@ logFile = open("server.log", "a")
 def commute():
 	while True:
 		try:
-			senders, wlist, xlist = select.select(clients, [], [])
+			senders, wlist, xlist = select.select(clients, [], [], 0.05)
 		except select.error:
 			pass
 		else:
 			for sender in senders:
-				data = sender.recv(2048)
+				data = sender.recv(4096)
 				if sender == clients[0]:
 					clients[1].send(data)
 				else:
@@ -55,10 +55,12 @@ while len(nick) < 2:
 		pass
 	else:
 		for client in clientsToRead:
-			n = client.recv(2048)
+			n = client.recv(1024)
 			n = n.decode()
 			echo("New player coming: " + n)
 			nick.append(n)
 echo("Game starting")
 logFile.close()
+for client in clients:
+	client.send(bytes("game", "utf-8"))
 commute()
