@@ -36,7 +36,7 @@ while working:
 	queries, wlist, xlist = select.select([connect], [], [])
 	for conn in queries:
 		conn_, info = conn.accept()
-		echo("lol")
+		echo("Connection accepted!")
 	#On ajoute le client a la liste
 		clients.append(conn_)
 	#On avise en fonction de sa taille
@@ -50,18 +50,15 @@ while working:
 clientsToRead = []
 while len(nick) < 2:
 	try:
-		clientsToRead, wlist, xlist = select.select(clients, [], [], 0.05)
+		clientsToRead, wlist, xlist = select.select(clients, [], [])
 	except select.error:
 		pass
 	else:
 		for client in clientsToRead:
-			n = client.recv(1024)
+			n = client.recv(2048)
 			n = n.decode()
 			echo("New player coming: " + n)
 			nick.append(n)
-for client in clients:
-	client.send(bytes(nick[0], "utf-8"))
-	client.send(bytes(nick[1], "utf-8"))
 echo("Game starting")
-logFile.Close()
-threading.Thread(None, commute, None, (), {'nom':'thread1'}).start()
+logFile.close()
+commute()
