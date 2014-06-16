@@ -14,7 +14,7 @@ def commute():
 			pass
 		else:
 			for sender in senders:
-				data = sender.recv(4096)
+				data = sender.recv(262144)
 				if sender == clients[0]:
 					clients[1].send(data)
 				else:
